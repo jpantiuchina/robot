@@ -17,6 +17,10 @@ public final class SensorData
     {
         for (ProximitySensorData proximitySensorData : proximitySensorDataArray)
             proximitySensorData.readFromScanResult(buffer);
+        //read professor method
+        for (ProximitySensorData professorsproximitySensorData : proximitySensorDataArray)
+            professorsproximitySensorData.infraRedData(buffer);
+
     }
 
 
@@ -51,13 +55,29 @@ class ProximitySensorData
 
     void readFromScanResult(byte[] buffer)
     {
+
+        byte signedHighByte = buffer[sensorIndex * 2]; // 2 bytes for each sensor
+        byte signedLowByte  = buffer[sensorIndex * 2 + 1];
         // http://stackoverflow.com/questions/7401550/how-to-convert-int-to-unsigned-byte-and-back
-        int highByte = buffer[sensorIndex * 2    ] & 0xFF;
-        int lowByte  = buffer[sensorIndex * 2 + 1] & 0xFF;
+        int highByte = ((int) signedHighByte) & 0xFF;
+        int lowByte  = ((int) signedLowByte ) & 0xFF;
         // merging high and low bytes to 16-bit integer
         range = (highByte << 8) + lowByte;
     }
 
+    //-------- professor’s solution
+    private short value;
+    void infraRedData(byte[] buffer) {
+        byte highbyte = buffer[sensorIndex * 2];
+        byte lowbyte  = buffer[sensorIndex * 2 + 1];
+        value = (short)(highbyte << 8);
+        value += lowbyte;
+    }
+
+    public short getValue() {
+        return value;
+    }
+    //--------end of professor’s solution
 
     public int getRangeInCm()
     {
@@ -68,6 +88,7 @@ class ProximitySensorData
     @Override
     public String toString()
     {
-        return "Proximity Sensor #" + sensorIndex + ": " + getRangeInCm() + " cm";
+        return "My Proximity Sensor #" + sensorIndex + ": " + getRangeInCm() + " cm" + "\n" +
+               "Prof. Proximity sensor #" + sensorIndex + ":" + getValue() + " cm";
     }
 }
