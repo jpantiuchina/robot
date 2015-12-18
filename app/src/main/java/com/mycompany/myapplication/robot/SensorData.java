@@ -1,10 +1,13 @@
 package com.mycompany.myapplication.robot;
 
 
+import java.util.Arrays;
+
 public final class SensorData
 {
     private final ProximitySensorData[] proximitySensorDataArray;
     private final InfraredSensorData[] infraredSensorDataArray;
+    private final ThermalSensorData thermalSensorData;
 
     public SensorData()
     {
@@ -14,8 +17,11 @@ public final class SensorData
 
 
         infraredSensorDataArray = new InfraredSensorData[2];
-            infraredSensorDataArray[0] = new InfraredSensorData(0);
-            infraredSensorDataArray[1] = new InfraredSensorData(1);
+        infraredSensorDataArray[0] = new InfraredSensorData(0);
+        infraredSensorDataArray[1] = new InfraredSensorData(1);
+
+        thermalSensorData = new ThermalSensorData();
+
     }
 
 
@@ -27,12 +33,20 @@ public final class SensorData
 
         for (InfraredSensorData infraredSensorData : infraredSensorDataArray)
             infraredSensorData.readFromScanResult(buffer);
+
+        thermalSensorData.readFromScanResult(buffer);
+
     }
 
 
     public ProximitySensorData getProximitySensorDataBySensorNumber(int i)
     {
         return proximitySensorDataArray[i - 1];
+    }
+
+    public ThermalSensorData getThermalSensorData()
+    {
+        return thermalSensorData;
     }
 
     @Override
@@ -44,7 +58,10 @@ public final class SensorData
             result += proximitySensorData + "\n";
 
         for (InfraredSensorData infraredSensorData: infraredSensorDataArray)
-            result+= infraredSensorData + "\n";
+            result += infraredSensorData + "\n";
+
+        result += thermalSensorData + "\n";
+
 
         return result;
     }
@@ -123,6 +140,38 @@ class InfraredSensorData
     public String toString()
     {
         return "Infrared Sensor #" + sensorIndex + ": " + getRangeInCm() + " cm";
+    }
+}
+
+
+class ThermalSensorData
+{
+    private byte ambientTemperature;
+    private final byte[] pixels = new byte[8];
+
+
+    void readFromScanResult(byte[] buffer)
+    {
+
+        ambientTemperature = buffer[17];
+        System.arraycopy(buffer, 18, pixels, 0, pixels.length);
+    }
+
+    public byte getAmbientTemperatureInDegreesC()
+    {
+        return ambientTemperature;
+    }
+
+    public byte[] getPixelsInDegreesC()
+    {
+        return pixels;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Temperature Sensor: " + getAmbientTemperatureInDegreesC() + " C " +
+                Arrays.toString(getPixelsInDegreesC());
     }
 }
 
