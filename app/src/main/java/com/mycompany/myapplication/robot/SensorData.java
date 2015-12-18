@@ -14,8 +14,8 @@ public final class SensorData
 
 
         infraredSensorDataArray = new InfraredSensorData[2];
-            infraredSensorDataArray[0] = new InfraredSensorData(41);
-            infraredSensorDataArray[1] = new InfraredSensorData(42);
+            infraredSensorDataArray[0] = new InfraredSensorData(0);
+            infraredSensorDataArray[1] = new InfraredSensorData(1);
     }
 
 
@@ -103,8 +103,8 @@ class InfraredSensorData
     void readFromScanResult(byte[] buffer)
     {
 
-        byte signedHighByte = buffer[sensorIndex]; // 2 bytes for each sensor
-        byte signedLowByte  = buffer[sensorIndex+ 1];
+        byte signedHighByte = buffer[41 + sensorIndex * 2]; // 2 bytes for each sensor
+        byte signedLowByte  = buffer[41 + sensorIndex * 2 + 1];
         // http://stackoverflow.com/questions/7401550/how-to-convert-int-to-unsigned-byte-and-back
         int highByte = ((int) signedHighByte) & 0xFF;
         int lowByte  = ((int) signedLowByte ) & 0xFF;
