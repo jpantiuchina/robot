@@ -24,6 +24,35 @@ public final class SensorData
 
     }
 
+    public boolean danger ()
+    {
+         if (proximitySensorDataArray[2].getRangeInCm() <= 20 || proximitySensorDataArray[3].getRangeInCm() <= 20 || proximitySensorDataArray[4].getRangeInCm() <= 20 || proximitySensorDataArray[5].getRangeInCm() <= 20)
+            {
+                return true;
+            } else
+                return false;
+    }
+
+    public boolean isDangerOnRight ()
+    {
+        if (proximitySensorDataArray[5].getRangeInCm() <= 20 || proximitySensorDataArray[3].getRangeInCm() <= 20 )
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public boolean isDangerOnLeft ()
+    {
+        if (proximitySensorDataArray[4].getRangeInCm() <= 20 || proximitySensorDataArray[2].getRangeInCm() <= 20 )
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
 
 
     void readFromScanResult(byte[] buffer)
@@ -54,8 +83,11 @@ public final class SensorData
     {
         String result = "Sensor Data\n";
 
+
         for (ProximitySensorData proximitySensorData : proximitySensorDataArray)
             result += proximitySensorData + "\n";
+
+
 
         for (InfraredSensorData infraredSensorData: infraredSensorDataArray)
             result += infraredSensorData + "\n";

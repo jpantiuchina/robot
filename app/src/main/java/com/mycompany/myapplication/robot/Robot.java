@@ -1,5 +1,7 @@
 package com.mycompany.myapplication.robot;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +37,8 @@ public final class Robot
      */
     public SensorData scan(int leftMotorSpeed, int rightMotorSpeed) throws IOException
     {
+        Log.i("Robot", "Scan " + leftMotorSpeed + " " + rightMotorSpeed);
+
         command[2] = (byte) leftMotorSpeed;
         command[3] = (byte) rightMotorSpeed;
         out.write(command);
@@ -44,6 +48,19 @@ public final class Robot
         sensorData.readFromScanResult(buffer);
 
         return sensorData;
+    }
+
+
+    public void scanWithoutExceptions(int leftMotorSpeed, int rightMotorSpeed)
+    {
+        try
+        {
+            scan(leftMotorSpeed, rightMotorSpeed);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
 
