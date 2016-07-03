@@ -1,4 +1,4 @@
-package com.mycompany.myapplication;
+package it.unibz.jpantiuchina.robot;
 
 import org.junit.Test;
 

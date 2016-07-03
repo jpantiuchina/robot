@@ -1,4 +1,4 @@
-package com.mycompany.myapplication.robot;
+package it.unibz.jpantiuchina.robot;
 
 
 import java.util.Arrays;
@@ -26,31 +26,17 @@ public final class SensorData
 
     public boolean danger ()
     {
-         if (proximitySensorDataArray[2].getRangeInCm() <= 20 || proximitySensorDataArray[3].getRangeInCm() <= 20 || proximitySensorDataArray[4].getRangeInCm() <= 20 || proximitySensorDataArray[5].getRangeInCm() <= 20)
-            {
-                return true;
-            } else
-                return false;
+        return proximitySensorDataArray[2].getRangeInCm() <= 20 || proximitySensorDataArray[3].getRangeInCm() <= 20 || proximitySensorDataArray[4].getRangeInCm() <= 20 || proximitySensorDataArray[5].getRangeInCm() <= 20;
     }
 
     public boolean isDangerOnRight ()
     {
-        if (proximitySensorDataArray[5].getRangeInCm() <= 20 || proximitySensorDataArray[3].getRangeInCm() <= 20 )
-        {
-            return true;
-        }
-        else
-            return false;
+        return proximitySensorDataArray[5].getRangeInCm() <= 20 || proximitySensorDataArray[3].getRangeInCm() <= 20;
     }
 
     public boolean isDangerOnLeft ()
     {
-        if (proximitySensorDataArray[4].getRangeInCm() <= 20 || proximitySensorDataArray[2].getRangeInCm() <= 20 )
-        {
-            return true;
-        }
-        else
-            return false;
+        return proximitySensorDataArray[4].getRangeInCm() <= 20 || proximitySensorDataArray[2].getRangeInCm() <= 20;
     }
 
 

@@ -1,4 +1,4 @@
-package com.mycompany.myapplication.robot;
+package it.unibz.jpantiuchina.robot;
 
 import android.util.Log;
 
