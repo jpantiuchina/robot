@@ -8,34 +8,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.UUID;
 
-import it.unibz.jpantiuchina.robot.hardware.Robot;
 
 
 public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener
 {
+    private static final int ENABLE_BT_REQUEST_TAG = 546; // means nothing, just an unique integer
     private static final String TAG = "MainActivity";
-    private static final int REQUEST_ENABLE_BT_TAG = 546; // means nothing, just an unique integer
-//    private static final String MY_DEVICE_NAME = "new-lenovo";
-    private static final String MY_DEVICE_NAME = "HC-06";
-
-    //http://stackoverflow.com/questions/23963815/sending-data-from-android-to-arduino-with-hc-06-bluetooth-module
-    // Well known SPP UUID
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final String ROBOT_BLUETOOTH_NAME = "HC-06";
+    // http://stackoverflow.com/questions/23963815/sending-data-from-android-to-arduino-with-hc-06-bluetooth-module
+    private static final UUID ARDUINO_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    private static final int TICK_DELAY = 100;
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothSocket socket;
-    private SeekBar sbSpeed;
 
-    private Robot robot;
-
-
+    private RobotController robotController;
+    private TextView textView;
 
 
     @Override
@@ -44,8 +42,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        sbSpeed = (SeekBar) findViewById(R.id.sbSpeed);
+        SeekBar sbSpeed = (SeekBar) findViewById(R.id.sbSpeed);
         sbSpeed.setOnSeekBarChangeListener(this);
+
+        textView = (TextView) findViewById(R.id.textView);
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         if (!bluetoothAdapter.isEnabled())
         {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT_TAG);
+            startActivityForResult(enableBtIntent, ENABLE_BT_REQUEST_TAG);
         }
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == REQUEST_ENABLE_BT_TAG)
+        if (requestCode == ENABLE_BT_REQUEST_TAG)
         {
             if (resultCode == RESULT_OK)
                 startDiscovery();
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     private void startDiscovery()
     {
-        Log.i(TAG, "Searching for device " + MY_DEVICE_NAME);
+        Log.i(TAG, "Searching for device " + ROBOT_BLUETOOTH_NAME);
         bluetoothAdapter.startDiscovery();
     }
 
@@ -112,18 +112,13 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     {
         Log.i(TAG, "Found Bluetooth device " + device.getName() + ' ' + device.getAddress());
 
-        if (!MY_DEVICE_NAME.equals(device.getName()))
+        if (!ROBOT_BLUETOOTH_NAME.equals(device.getName()))
             return;
 
-
         Log.i(TAG, "Connecting to this device");
-
-        //UUID uuid = device.getUuids()[0].getUuid();
-        //solution from stackoverflow
-        UUID uuid = MY_UUID;
+        UUID uuid = ARDUINO_SPP;
 
         Log.i(TAG, "Connecting to UUID " + uuid);
-
         socket = device.createRfcommSocketToServiceRecord(uuid);
 
         bluetoothAdapter.cancelDiscovery(); // Save resources and prevent double connects
@@ -141,124 +136,73 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         Log.i(TAG, "Successfully connected");
 
-        robot = new Robot(socket.getInputStream(), socket.getOutputStream());
-
-//        while (true)
-//        {
-//            robot.setMotorSpeedsAndUpdateSensors(-120, -120); //-120 go slowly
-//            Log.i(TAG, robot.toString());
-//            if (robot.isDangerOnLeft())
-//            {
-//                robot.setMotorSpeedsAndUpdateSensors(128 + 10,128 - 10);
-//            }
-//            else if (robot.isDangerOnRight())
-//            {
-//                robot.setMotorSpeedsAndUpdateSensors(128 - 10,128 + 10);
-//            }
-//            Thread.sleep(200);
-//        }
-
-
+        robotController = new RobotController(socket.getInputStream(), socket.getOutputStream());
+        tickTimerHandler.postDelayed(tickTimerRunnable, TICK_DELAY);
     }
 
 
-    private static final int FORWARD_SPEED = 10;
-    private static final int TURN_SPEED = 50;
-
-    private enum Direction { FORWARD, BACKWARD, LEFT, RIGHT, STOP }
-
-    private Direction currentDirection = Direction.STOP;
 
 
-    private int getForwardSpeed()
-    {
-        return 127 - sbSpeed.getProgress(); //101
-//        return FORWARD_SPEED;
-    }
 
-
-    public void turnLeft()
+    public void turnLeft(View view)
     {
         Log.i(TAG, "left");
-        if (currentDirection == Direction.RIGHT)
-        {
-            stop();
-        }
-        else
-        {
-            //robot.setMotorSpeedsAndUpdateSensorsWithoutExceptions(-TURN_SPEED, TURN_SPEED);
-            robot.setMotorSpeedsAndUpdateSensorsWithoutExceptions(-getForwardSpeed(), getForwardSpeed());
-            currentDirection = Direction.LEFT;
-        }
+        robotController.turnLeft();
     }
 
-
-    public void turnRight()
+    public void turnRight(View view)
     {
         Log.i(TAG, "right");
-        if (currentDirection == Direction.LEFT)
-        {
-            stop();
-        }
-        else
-        {
-            //robot.setMotorSpeedsAndUpdateSensorsWithoutExceptions(TURN_SPEED, -TURN_SPEED);
-            robot.setMotorSpeedsAndUpdateSensorsWithoutExceptions(getForwardSpeed(), -getForwardSpeed());
-            currentDirection = Direction.RIGHT;
-        }
+        robotController.turnRight();
     }
 
-    public void goForward()
+    public void goForward(View view)
     {
         Log.i(TAG, "forward");
-        if (currentDirection == Direction.BACKWARD)
-        {
-            stop();
-        }
-        else
-        {
-            robot.setMotorSpeedsAndUpdateSensorsWithoutExceptions(getForwardSpeed(), getForwardSpeed());
-            currentDirection = Direction.FORWARD;
-        }
+        robotController.goForward();
     }
 
-    public void goBackward()
+    public void goBackward(View view)
     {
         Log.i(TAG, "backward");
-        if (currentDirection == Direction.FORWARD)
-        {
-            stop();
-        }
-        else
-        {
-            robot.setMotorSpeedsAndUpdateSensorsWithoutExceptions(-getForwardSpeed(), -getForwardSpeed());
-            currentDirection = Direction.BACKWARD;
-        }
+        robotController.goBackward();
     }
 
 
-    private void stop()
-    {
-        Log.i(TAG, "stop");
-        robot.setMotorSpeedsAndUpdateSensorsWithoutExceptions(0x80, 0x80); //0x80
-        currentDirection = Direction.STOP;
-    }
 
+    /////////////////////////////////////// SEEK BAR SUPPORT ///////////////////////////////////////
 
-    // From SeekBar
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
     {
-
+        robotController.setSpeed(127 - progress);
     }
-
-    // From SeekBar, ignore
     @Override public void onStartTrackingTouch(SeekBar seekBar) { }
     @Override public void onStopTrackingTouch(SeekBar seekBar) { }
 
 
 
+    ////////////////////////////////////////// TICK TIMER //////////////////////////////////////////
 
+    // http://stackoverflow.com/questions/4597690/android-timer-how
+    private final Handler tickTimerHandler = new Handler();
+    private final Runnable tickTimerRunnable = new Runnable()
+    {
+        @Override
+        public void run()
+        {
+            if (robotController != null)
+            {
+                robotController.tick();
+                textView.setText(robotController.getStatus());
+            }
+            tickTimerHandler.postDelayed(this, TICK_DELAY);
+        }
+    };
+
+
+
+    //////////////////////////////// BLUETOOTH DISCOVERY SUPPORT ///////////////////////////////////
 
     private final BroadcastReceiver bluetoothDeviceFoundReceiver = new BroadcastReceiver()
     {
@@ -273,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             catch (Exception e)
             {
                 Log.e(TAG, "Error in device discovery", e);
-//                throw new RuntimeException(e);
             }
         }
     };

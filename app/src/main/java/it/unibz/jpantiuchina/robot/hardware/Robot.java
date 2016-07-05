@@ -118,21 +118,24 @@ public final class Robot
     @Override
     public String toString()
     {
-        String result = "Sensor Data\n";
-
+        StringBuilder result = new StringBuilder("Sensor Data\n");
 
         for (ProximitySensor proximitySensor : proximitySensors)
-            result += proximitySensor + "\n";
-
-
+        {
+            result.append(proximitySensor);
+            result.append('\n');
+        }
 
         for (InfraredSensor infraredSensor : infraredSensors)
-            result += infraredSensor + "\n";
+        {
+            result.append(infraredSensor);
+            result.append('\n');
+        }
 
-        result += thermalSensor + "\n";
+        result.append(thermalSensor);
+        result.append('\n');
 
-
-        return result;
+        return result.toString();
     }
 }
 
