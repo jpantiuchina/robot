@@ -32,13 +32,13 @@ public final class Robot
     private final ThermalSensor thermalSensor = new ThermalSensor();
 
     private final byte[] scanResponseBuffer = new byte[60];
-    private final byte[] scanCommandBuffer = new byte[] { 0x5A, 0x04, 0, 0 };
+    private final byte[] scanCommandBuffer = {0x5A, 0x04, 0, 0};
 
 
     public Robot(InputStream inputStream, OutputStream outputStream)
     {
-        this.in = inputStream;
-        this.out = outputStream;
+        in = inputStream;
+        out = outputStream;
     }
 
     /**
@@ -49,7 +49,7 @@ public final class Robot
      */
     private void setMotorSpeedsAndUpdateSensors(int leftMotorSpeed, int rightMotorSpeed) throws IOException
     {
-        Log.i("Robot", "Scan " + leftMotorSpeed + " " + rightMotorSpeed);
+        Log.i("Robot", "Scan " + leftMotorSpeed + ' ' + rightMotorSpeed);
 
         // Sending scan command to robot
         scanCommandBuffer[2] = (byte) leftMotorSpeed;
@@ -70,7 +70,8 @@ public final class Robot
     }
 
 
-    public void setMotorSpeedsAndUpdateSensorsWithoutExceptions(int leftMotorSpeed, int rightMotorSpeed)
+    public void setMotorSpeedsAndUpdateSensorsWithoutExceptions(int leftMotorSpeed,
+                                                                int rightMotorSpeed)
     {
         try
         {
@@ -85,19 +86,22 @@ public final class Robot
 
 
 
-    public boolean danger ()
+    public boolean isDanger()
     {
-        return proximitySensors[2].getRangeInCm() <= 20 || proximitySensors[3].getRangeInCm() <= 20 || proximitySensors[4].getRangeInCm() <= 20 || proximitySensors[5].getRangeInCm() <= 20;
+        return (proximitySensors[2].getRangeInCm() <= 20) ||
+                (proximitySensors[3].getRangeInCm() <= 20) ||
+                (proximitySensors[4].getRangeInCm() <= 20) ||
+                (proximitySensors[5].getRangeInCm() <= 20);
     }
 
     public boolean isDangerOnRight ()
     {
-        return proximitySensors[5].getRangeInCm() <= 20 || proximitySensors[3].getRangeInCm() <= 20;
+        return (proximitySensors[5].getRangeInCm() <= 20) || (proximitySensors[3].getRangeInCm() <= 20);
     }
 
     public boolean isDangerOnLeft ()
     {
-        return proximitySensors[4].getRangeInCm() <= 20 || proximitySensors[2].getRangeInCm() <= 20;
+        return (proximitySensors[4].getRangeInCm() <= 20) || (proximitySensors[2].getRangeInCm() <= 20);
     }
 
     public ProximitySensor getProximitySensorDataBySensorNumber(int i)
