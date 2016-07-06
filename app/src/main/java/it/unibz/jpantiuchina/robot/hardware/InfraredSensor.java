@@ -1,14 +1,15 @@
 package it.unibz.jpantiuchina.robot.hardware;
 
 
-public final class InfraredSensor
+import it.unibz.jpantiuchina.robot.util.RobotMath;
+
+final class InfraredSensor
 {
     private final int sensorIndex;
     private int range;
-    private final FilteredValue filteredValue = new FilteredValue();
 
 
-    public InfraredSensor(int sensorIndex)
+    InfraredSensor(int sensorIndex)
     {
         this.sensorIndex = sensorIndex;
     }
@@ -16,19 +17,15 @@ public final class InfraredSensor
 
     void readFromScanResult(byte[] buffer)
     {
-        range = Util.convert2SignedBytesToUnsigned(buffer, 41 + sensorIndex * 2);
-        filteredValue.addNewValue(range);
+        float voltage = Util.convert2SignedBytesToUnsigned(buffer, 41 + sensorIndex * 2);
+        voltage = RobotMath.constraint(voltage, 15, 120);
+        range = (int) RobotMath.map(voltage, 15, 120, 80, 10);
     }
 
 
-    private int getRangeInCm()
+    int getRangeInCm()
     {
         return range;
-    }
-
-    public int getFilteredRangeInCm()
-    {
-        return filteredValue.getFilteredValue();
     }
 
 

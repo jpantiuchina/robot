@@ -1,4 +1,4 @@
-package it.unibz.jpantiuchina.robot.hardware;
+package it.unibz.jpantiuchina.robot.logical;
 
 import java.util.Arrays;
 

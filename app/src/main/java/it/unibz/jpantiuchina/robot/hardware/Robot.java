@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import it.unibz.jpantiuchina.robot.util.RobotMath;
+
 
 /**
  * Robot interface abstraction. Does not know how to connect to robot physically,
@@ -12,19 +14,13 @@ import java.io.OutputStream;
  */
 public final class Robot
 {
-    public static final double MAX_SPEED_IN_CMPS = 100;
+    public static final float MAX_SPEED_IN_CMPS = 100;
 
     private final InputStream in;
     private final OutputStream out;
 
     private final ProximitySensor[] proximitySensors = new ProximitySensor[8];
-    private final ProximitySensor[] forwardLeftLookingProximitySensors;
-    private final ProximitySensor[] forwardRightLookingProximitySensors;
-    private final ProximitySensor[] backwardLeftLookingProximitySensors;
-    private final ProximitySensor[] backwardRightLookingProximitySensors;
     private final InfraredSensor[] infraredSensors = new InfraredSensor[2];
-    private final InfraredSensor forwardLeftLookingInfraredSensor;
-    private final InfraredSensor forwardRightLookingInfraredSensor;
     private final ThermalSensor thermalSensor = new ThermalSensor();
 
     private final byte[] scanResponseBuffer = new byte[60];
@@ -37,24 +33,16 @@ public final class Robot
         out = outputStream;
         for (int i = 0; i < proximitySensors.length; i++)
             proximitySensors[i] = new ProximitySensor(i);
-        forwardLeftLookingProximitySensors   = new ProximitySensor[] {proximitySensors[2], proximitySensors[3]};
-        forwardRightLookingProximitySensors  = new ProximitySensor[] {proximitySensors[4], proximitySensors[5]};
-        backwardLeftLookingProximitySensors  = new ProximitySensor[] {proximitySensors[0], proximitySensors[1]};
-        backwardRightLookingProximitySensors = new ProximitySensor[] {proximitySensors[6], proximitySensors[7]};
         for (int i = 0; i < infraredSensors.length; i++)
             infraredSensors[i] = new InfraredSensor(i);
-        forwardLeftLookingInfraredSensor = infraredSensors[0];
-        forwardRightLookingInfraredSensor = infraredSensors[1];
     }
 
     /**
      * @param leftSpeedInCmps speed in cm/s from range [-MAX_SPEED_IN_CMPS, MAX_SPEED_IN_CMPS]
      * @param rightSpeedInCmps like leftMotorSpeedInCmps
      */
-    private void setMotorSpeedsAndUpdateSensors(double leftSpeedInCmps, double rightSpeedInCmps) throws IOException
+    public void setMotorSpeedsAndUpdateSensors(float leftSpeedInCmps, float rightSpeedInCmps) throws IOException
     {
-//        Log.i("Robot", "Scan " + leftSpeedInCmps + " cm/s, " + rightSpeedInCmps + " cm/s");
-
         // Sending scan command to robot
         scanCommandBuffer[2] = convertCmpsToMotorSpeedByte(leftSpeedInCmps);
         scanCommandBuffer[3] = convertCmpsToMotorSpeedByte(rightSpeedInCmps);
@@ -74,18 +62,17 @@ public final class Robot
     }
 
 
-    private static byte convertCmpsToMotorSpeedByte(double speed)
+    private static byte convertCmpsToMotorSpeedByte(float speed)
     {
-        // 0 -- full reverse, 128 -- stop, 255 -- full forward
-        speed = Math.max(-MAX_SPEED_IN_CMPS, Math.min(MAX_SPEED_IN_CMPS, speed));
-        speed /= MAX_SPEED_IN_CMPS;
-        speed *= 127;
+        // 0 is full reverse, 128 is stop, 255 is full forward
+        speed = RobotMath.constraint(speed, -MAX_SPEED_IN_CMPS, MAX_SPEED_IN_CMPS);
+        speed = RobotMath.map(speed, -MAX_SPEED_IN_CMPS, MAX_SPEED_IN_CMPS, -127, 127);
         return (byte) (Math.round(speed) + 128);
     }
 
 
 
-    public void setMotorSpeedsAndUpdateSensorsWithoutExceptions(double leftMotorSpeed, double rightMotorSpeed)
+    public void setMotorSpeedsAndUpdateSensorsWithoutExceptions(float leftMotorSpeed, float rightMotorSpeed)
     {
         try
         {
@@ -99,47 +86,19 @@ public final class Robot
 
 
 
-//    public ProximitySensor getProximitySensorDataBySensorNumber(int i)
-//    {
-//        return proximitySensors[i - 1];
-//    }
-
-//    public ThermalSensor getThermalSensor()
-//    {
-//        return thermalSensor;
-//    }
-
-
-    private static int minFilteredValue(ProximitySensor[] proximitySensors, InfraredSensor infraredSensor)
+    public int getProximitySensorRangeInCm(int sensorNumber)
     {
-        int result = Integer.MAX_VALUE;
-        if (infraredSensor != null)
-            result = infraredSensor.getFilteredRangeInCm();
-        for (ProximitySensor sensor : proximitySensors)
-            result = Math.min(result, sensor.getFilteredRangeInCm());
-        return result;
+        return proximitySensors[sensorNumber - 1].getRangeInCm();
+    }
+
+    public int getInfraredSensorRangeInCm(int sensorNumber)
+    {
+        return infraredSensors[sensorNumber - 1].getRangeInCm();
     }
 
 
-    public int getFilteredFrontLeftObstacleDistanceInCm()
-    {
-        return minFilteredValue(forwardLeftLookingProximitySensors, forwardLeftLookingInfraredSensor);
-    }
 
-    public int getFilteredFrontRightObstacleDistanceInCm()
-    {
-        return minFilteredValue(forwardRightLookingProximitySensors, forwardRightLookingInfraredSensor);
-    }
 
-    public int getFilteredBackLeftObstacleDistanceInCm()
-    {
-        return minFilteredValue(backwardLeftLookingProximitySensors, null);
-    }
-
-    public int getFilteredBackRightObstacleDistanceInCm()
-    {
-        return minFilteredValue(backwardRightLookingProximitySensors, null);
-    }
 
 
 

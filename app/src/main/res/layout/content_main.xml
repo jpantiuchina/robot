@@ -14,8 +14,8 @@
         android:id="@+id/btnLeft"
         android:background="@drawable/left"
         android:onClick="turnLeft"
-        android:layout_width="70dip"
-        android:layout_height="70dip"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
         android:layout_alignTop="@+id/btnRight"
         android:layout_toLeftOf="@+id/btnBackward"
         android:layout_toStartOf="@+id/btnBackward"/>
@@ -24,8 +24,8 @@
         android:id="@+id/btnRight"
         android:background="@drawable/right"
         android:onClick="turnRight"
-        android:layout_width="70dip"
-        android:layout_height="70dip"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/btnForward"
         android:layout_toEndOf="@+id/btnForward"/>
@@ -34,8 +34,8 @@
         android:id="@+id/btnForward"
         android:background="@drawable/up"
         android:onClick="goForward"
-        android:layout_width="70dip"
-        android:layout_height="70dip"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
 
         android:layout_above="@+id/btnLeft"
         android:layout_toRightOf="@+id/btnLeft"
@@ -45,8 +45,8 @@
         android:id="@+id/btnBackward"
         android:background="@drawable/down"
         android:onClick="goBackward"
-        android:layout_width="70dip"
-        android:layout_height="70dip"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
         android:layout_below="@+id/btnLeft"
         android:layout_centerHorizontal="true"/>
 
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/sbSpeed"
         android:max="100"
-        android:layout_marginBottom="43dp"
+        android:layout_marginBottom="20dp"
         android:layout_above="@+id/tvFrontRight"
         android:layout_alignLeft="@+id/btnLeft"
         android:layout_alignStart="@+id/btnLeft"
@@ -66,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Front right"
+        android:text="\?"
         android:id="@+id/tvFrontRight"
         android:layout_above="@+id/btnForward"
         android:layout_toRightOf="@+id/btnForward"
@@ -76,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Front left"
+        android:text="\?"
         android:id="@+id/tvFrontLeft"
         android:layout_above="@+id/btnForward"
         android:layout_toLeftOf="@+id/btnForward"
@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Back left"
+        android:text="\?"
         android:id="@+id/tvBackLeft"
         android:layout_below="@+id/btnBackward"
         android:layout_toLeftOf="@+id/btnBackward"
@@ -96,7 +96,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Back right"
+        android:text="\?"
         android:id="@+id/tvBackRight"
         android:layout_below="@+id/btnBackward"
         android:layout_toRightOf="@+id/btnBackward"
@@ -107,10 +107,29 @@
         android:layout_height="wrap_content"
         android:text="Listen..."
         android:id="@+id/btnListen"
-        android:layout_below="@+id/tvBackLeft"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
-        android:onClick="listen"/>
+        android:onClick="listen"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Initializing..."
+        android:id="@+id/tvStatus"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Play/Stop Demo"
+        android:id="@+id/btnDemo"
+        android:onClick="demo"
+        android:layout_alignTop="@+id/btnListen"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
 
 
 </RelativeLayout>
