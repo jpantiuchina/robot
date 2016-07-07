@@ -112,4 +112,9 @@ public final class RobotController
     {
         return robot.getFilteredBackRightObstacleDistanceInCm();
     }
+
+    public float getBatteryVoltage()
+    {
+        return robot.getBatteryVoltage();
+    }
 }

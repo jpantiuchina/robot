@@ -4,7 +4,7 @@ package it.unibz.jpantiuchina.robot.hardware;
 final class ProximitySensor
 {
     private final int sensorIndex;
-    private int range;
+    private int range = -1;
 
     ProximitySensor(int sensorIndex)
     {

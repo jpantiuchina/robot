@@ -78,7 +78,7 @@ public final class DemoPlayer implements Runnable
     @Override
     public void run()
     {
-        if (nextAction > PROGRAM.length)
+        if (nextAction >= PROGRAM.length)
         {
             stop();
         }

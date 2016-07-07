@@ -22,6 +22,7 @@ public final class Robot
     private final ProximitySensor[] proximitySensors = new ProximitySensor[8];
     private final InfraredSensor[] infraredSensors = new InfraredSensor[2];
     private final ThermalSensor thermalSensor = new ThermalSensor();
+    private final BatteryVoltage batteryVoltage = new BatteryVoltage();
 
     private final byte[] scanResponseBuffer = new byte[60];
     private final byte[] scanCommandBuffer = {0x5A, 0x04, 0, 0};
@@ -59,6 +60,7 @@ public final class Robot
         for (InfraredSensor infraredSensor : infraredSensors)
             infraredSensor.readFromScanResult(scanResponseBuffer);
         thermalSensor.readFromScanResult(scanResponseBuffer);
+        batteryVoltage.readFromScanResult(scanResponseBuffer);
     }
 
 
@@ -97,6 +99,10 @@ public final class Robot
     }
 
 
+    public float getBatteryVoltage()
+    {
+        return batteryVoltage.getVoltage();
+    }
 
 
 

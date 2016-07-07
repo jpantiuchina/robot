@@ -6,7 +6,7 @@ import it.unibz.jpantiuchina.robot.util.RobotMath;
 final class InfraredSensor
 {
     private final int sensorIndex;
-    private int range;
+    private int range = -1;
 
 
     InfraredSensor(int sensorIndex)

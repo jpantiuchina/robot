@@ -12,7 +12,7 @@ final class Util
     }
 
 
-    private static int convertSignedByteToUnsignedByte(byte[] buffer, int startByte)
+    static int convertSignedByteToUnsignedByte(byte[] buffer, int startByte)
     {
         // http://stackoverflow.com/questions/7401550/how-to-convert-int-to-unsigned-byte-and-back
         // noinspection UnnecessaryExplicitNumericCast

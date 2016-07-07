@@ -77,5 +77,8 @@ public final class LogicalRobot
         return backRightObstacleDistance.getFilteredValue();
     }
 
-
+    public float getBatteryVoltage()
+    {
+        return robot.getBatteryVoltage();
+    }
 }

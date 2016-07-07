@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private TextView tvFrontLeft;
     private TextView tvBackLeft;
     private TextView tvBackRight;
+    private TextView tvVoltage;
 
     private ConnectingRobotController controller;
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         tvFrontRight = (TextView) findViewById(R.id.tvFrontRight);
         tvBackLeft   = (TextView) findViewById(R.id.tvBackLeft  );
         tvBackRight  = (TextView) findViewById(R.id.tvBackRight );
+        tvVoltage    = (TextView) findViewById(R.id.tvVoltage   );
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -242,6 +244,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         updateDistanceText(tvFrontRight, controller.getFilteredFrontRightObstacleDistanceInCm());
         updateDistanceText(tvBackLeft,   controller.getFilteredBackLeftObstacleDistanceInCm  ());
         updateDistanceText(tvBackRight,  controller.getFilteredBackRightObstacleDistanceInCm ());
+        if (controller.getBatteryVoltage() >= 0)
+            tvVoltage.setText(controller.getBatteryVoltage() + " V");
+        else
+            tvVoltage.setText("?");
 
         handler.postDelayed(tickTimerRunnable, TICK_DELAY);
     }

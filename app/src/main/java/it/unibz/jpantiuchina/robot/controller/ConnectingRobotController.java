@@ -22,8 +22,6 @@ import it.unibz.jpantiuchina.robot.controller.RobotController.Direction;
  */
 public final class ConnectingRobotController
 {
-
-
     public enum Status {DISCOVERING, CONNECTING, CONNECTED}
 
     public interface ConnectingRobotControllerStatusListener
@@ -139,7 +137,7 @@ public final class ConnectingRobotController
             socket.connect();
             controller = new RobotController(socket.getInputStream(), socket.getOutputStream());
             controller.setSpeed(speed);
-            status = Status.CONNECTED;
+            setStatus(Status.CONNECTED);
             Log.i(TAG, "Successfully connected");
         }
         catch (IOException e)
@@ -232,6 +230,11 @@ public final class ConnectingRobotController
     public int getFilteredBackRightObstacleDistanceInCm()
     {
         return controller != null ? controller.getFilteredBackRightObstacleDistanceInCm() : -1;
+    }
+
+    public float getBatteryVoltage()
+    {
+        return controller != null ? controller.getBatteryVoltage() : -1;
     }
 
 
