@@ -72,12 +72,12 @@ public final class RobotController
                 rightMotorSpeed = -getAdjustedSpeedForObstacleDistance(backLeft);
                 break;
             case LEFT:
-                leftMotorSpeed  = -speed / 3;
-                rightMotorSpeed =  speed / 3;
+                leftMotorSpeed  = -speed / 2;
+                rightMotorSpeed =  speed / 2;
                 break;
             case RIGHT:
-                leftMotorSpeed  =  speed / 3;
-                rightMotorSpeed = -speed / 3;
+                leftMotorSpeed  =  speed / 2;
+                rightMotorSpeed = -speed / 2;
                 break;
             case STOP:
                 break;
