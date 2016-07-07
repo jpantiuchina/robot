@@ -25,7 +25,7 @@ public final class RobotController
 
     public void setSpeed(float speed) throws IOException
     {
-        this.speed = RobotMath.constraint(speed, 0, Robot.MAX_SPEED_IN_CMPS);
+        this.speed = RobotMath.constrain(speed, 0, Robot.MAX_SPEED_IN_CMPS);
         tick();
     }
 
@@ -43,9 +43,9 @@ public final class RobotController
     }
 
 
-    private static float getMaxAllowedSpeedForObstacleDistance(int obstacleDistanceInCm)
+    private float getAdjustedSpeedForObstacleDistance(int obstacleDistanceInCm)
     {
-        return RobotMath.map(obstacleDistanceInCm, 10, 30, 0, Robot.MAX_SPEED_IN_CMPS);
+        return RobotMath.mapAndConstrain(obstacleDistanceInCm, 20, 50, 0, speed);
     }
 
 
@@ -54,36 +54,30 @@ public final class RobotController
      */
     public void tick() throws IOException
     {
-        float adjustedSpeed = speed;
-
-        float leftMotorSpeed = 0;
+        float leftMotorSpeed  = 0;
         float rightMotorSpeed = 0;
 
         switch (direction)
         {
             case FORWARD:
-                leftMotorSpeed  =  adjustedSpeed;
-                rightMotorSpeed =  adjustedSpeed;
                 int frontLeft   = robot.getFilteredFrontLeftObstacleDistanceInCm();
                 int frontRight  = robot.getFilteredFrontRightObstacleDistanceInCm();
-                leftMotorSpeed  = Math.min(leftMotorSpeed,  getMaxAllowedSpeedForObstacleDistance(frontRight));
-                rightMotorSpeed = Math.min(rightMotorSpeed, getMaxAllowedSpeedForObstacleDistance(frontLeft));
+                leftMotorSpeed  = getAdjustedSpeedForObstacleDistance(frontRight);
+                rightMotorSpeed = getAdjustedSpeedForObstacleDistance(frontLeft);
                 break;
             case BACKWARD:
-                leftMotorSpeed  = -adjustedSpeed;
-                rightMotorSpeed = -adjustedSpeed;
                 int backLeft    = robot.getFilteredBackLeftObstacleDistanceInCm();
                 int backRight   = robot.getFilteredBackRightObstacleDistanceInCm();
-                leftMotorSpeed  = -Math.min(-leftMotorSpeed,  getMaxAllowedSpeedForObstacleDistance(backRight));
-                rightMotorSpeed = -Math.min(-rightMotorSpeed, getMaxAllowedSpeedForObstacleDistance(backLeft));
+                leftMotorSpeed  = -getAdjustedSpeedForObstacleDistance(backRight);
+                rightMotorSpeed = -getAdjustedSpeedForObstacleDistance(backLeft);
                 break;
             case LEFT:
-                leftMotorSpeed  = -adjustedSpeed;
-                rightMotorSpeed =  adjustedSpeed;
+                leftMotorSpeed  = -speed / 3;
+                rightMotorSpeed =  speed / 3;
                 break;
             case RIGHT:
-                leftMotorSpeed  =  adjustedSpeed;
-                rightMotorSpeed = -adjustedSpeed;
+                leftMotorSpeed  =  speed / 3;
+                rightMotorSpeed = -speed / 3;
                 break;
             case STOP:
                 break;

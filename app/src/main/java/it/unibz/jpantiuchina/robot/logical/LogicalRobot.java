@@ -36,10 +36,10 @@ public final class LogicalRobot
     {
         robot.setMotorSpeedsAndUpdateSensors(leftSpeedInCmps, rightSpeedInCmps);
 
-        frontRightObstacleDistance.addNewValue(minFilteredValue(FORWARD_LEFT_LOOKING_PROXIMITY_SENSORS, FORWARD_LEFT_LOOKING_INFRARED_SENSOR));
+        frontLeftObstacleDistance. addNewValue(minFilteredValue(FORWARD_LEFT_LOOKING_PROXIMITY_SENSORS, FORWARD_LEFT_LOOKING_INFRARED_SENSOR));
         frontRightObstacleDistance.addNewValue(minFilteredValue(FORWARD_RIGHT_LOOKING_PROXIMITY_SENSORS, FORWARD_RIGHT_LOOKING_INFRARED_SENSOR));
-        frontRightObstacleDistance.addNewValue(minFilteredValue(BACKWARD_LEFT_LOOKING_PROXIMITY_SENSORS, 0));
-        frontRightObstacleDistance.addNewValue(minFilteredValue(BACKWARD_RIGHT_LOOKING_PROXIMITY_SENSORS, 0));
+        backLeftObstacleDistance.  addNewValue(minFilteredValue(BACKWARD_LEFT_LOOKING_PROXIMITY_SENSORS, 0));
+        backRightObstacleDistance. addNewValue(minFilteredValue(BACKWARD_RIGHT_LOOKING_PROXIMITY_SENSORS, 0));
     }
 
 

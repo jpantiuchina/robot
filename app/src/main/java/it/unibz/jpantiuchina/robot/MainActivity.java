@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         updateDistanceText(tvBackLeft,   controller.getFilteredBackLeftObstacleDistanceInCm  ());
         updateDistanceText(tvBackRight,  controller.getFilteredBackRightObstacleDistanceInCm ());
         if (controller.getBatteryVoltage() >= 0)
-            tvVoltage.setText(controller.getBatteryVoltage() + " V");
+            tvVoltage.setText(String.format("%.1f V",  controller.getBatteryVoltage()));
         else
             tvVoltage.setText("?");
 

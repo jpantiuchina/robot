@@ -18,8 +18,8 @@ final class InfraredSensor
     void readFromScanResult(byte[] buffer)
     {
         float voltage = Util.convert2SignedBytesToUnsigned(buffer, 41 + sensorIndex * 2);
-        voltage = RobotMath.constraint(voltage, 15, 120);
-        range = (int) RobotMath.map(voltage, 15, 120, 80, 10);
+//        Log.i("IR", "Voltage: " + voltage);
+        range = (int) RobotMath.mapAndConstrain(voltage, 15, 200, 80, 10);
     }
 
 

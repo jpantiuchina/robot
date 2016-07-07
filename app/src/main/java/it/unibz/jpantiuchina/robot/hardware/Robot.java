@@ -1,5 +1,7 @@
 package it.unibz.jpantiuchina.robot.hardware;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,30 +63,18 @@ public final class Robot
             infraredSensor.readFromScanResult(scanResponseBuffer);
         thermalSensor.readFromScanResult(scanResponseBuffer);
         batteryVoltage.readFromScanResult(scanResponseBuffer);
+
+//        Log.i("Robot", toString());
     }
 
 
     private static byte convertCmpsToMotorSpeedByte(float speed)
     {
         // 0 is full reverse, 128 is stop, 255 is full forward
-        speed = RobotMath.constraint(speed, -MAX_SPEED_IN_CMPS, MAX_SPEED_IN_CMPS);
-        speed = RobotMath.map(speed, -MAX_SPEED_IN_CMPS, MAX_SPEED_IN_CMPS, -127, 127);
+        speed = RobotMath.mapAndConstrain(speed, -MAX_SPEED_IN_CMPS, MAX_SPEED_IN_CMPS, -127, 127);
         return (byte) (Math.round(speed) + 128);
     }
 
-
-
-    public void setMotorSpeedsAndUpdateSensorsWithoutExceptions(float leftMotorSpeed, float rightMotorSpeed)
-    {
-        try
-        {
-            setMotorSpeedsAndUpdateSensors(leftMotorSpeed, rightMotorSpeed);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-    }
 
 
 
